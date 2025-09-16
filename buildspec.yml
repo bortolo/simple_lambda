@@ -8,6 +8,7 @@ phases:
     commands:
       - cd $CODEBUILD_SRC_DIR
       - zip -r ../lambda-package.zip .
+      - cd ..
 
 artifacts:
   files:
