@@ -6,7 +6,8 @@ phases:
       - pip install -r requirements.txt -t .
   build:
     commands:
-      - zip -r lambda-package.zip .
+      - cd $CODEBUILD_SRC_DIR
+      - zip -r ../lambda-package.zip .
 
 artifacts:
   files:
