@@ -2,17 +2,11 @@ import json
 import plotly.express as px
 
 def lambda_handler(event, context):
-    # dati di esempio
-    x = [1, 2, 3]
-    y = [4, 5, 6]
-
-    fig = px.line(x=x, y=y, title="Grafico Plotly da Lambda")
-    
-    # converto in HTML (solo il div)
-    html_div = fig.to_html(full_html=False)
-    
+    body = json.loads(event["body"])
+    x = body.get("x", [])
+    y = body.get("y", [])
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps({"graph": html_div})
+        "body": json.dumps({"message": "Grafico ricevuto", "x": x, "y": y})
     }
