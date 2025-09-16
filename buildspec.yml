@@ -8,8 +8,11 @@ phases:
     commands:
       - echo $CODEBUILD_SRC_DIR
       - pwd
-      - zip -r $CODEBUILD_SRC_DIR/artifact/lambda-package.zip .
-
+      - ls
+      - zip -r lambda-package.zip .
+  post_build:
+    commands:
+      - unzip -l lambda-package.zip
 artifacts:
   files:
     - lambda-package.zip
