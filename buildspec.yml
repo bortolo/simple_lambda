@@ -12,8 +12,8 @@ phases:
       - zip -r lambda-package.zip .
   post_build:
     commands:
-      - unzip -l lambda-package.zip
+      - aws lambda update-function-code --function-name lambda_hello_world --zip-file fileb://lambda-package.zip
+
 artifacts:
-  base-directory: $CODEBUILD_SRC_DIR
   files:
     - lambda-package.zip
