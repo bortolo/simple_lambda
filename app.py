@@ -25,15 +25,26 @@ def get_status():
 def get_title():
     return build_response(200, {"title": "Titolo aggiornato dalla Lambda!"})
 
+# def get_graph():
+#     df = px.data.iris()
+#     fig = px.scatter(df, x="sepal_width", y="sepal_length", color="species")
+#     graph_html = fig.to_json()
+#     return build_response(200, graph_html, content_type="application/json")
+
 def get_graph():
     df = px.data.iris()
     fig = px.scatter(df, x="sepal_width", y="sepal_length", color="species")
-    #graph_html = fig.to_html(full_html=False, include_plotlyjs="cdn")
-    # Genero HTML completo e autosufficiente
-    # graph_html = fig.to_html(full_html=True, include_plotlyjs="cdn")
-    graph_html = fig.to_json()
-#    return build_response(200, graph_html, content_type="text/html")
-    return build_response(200, graph_html, content_type="application/json")
+    # Converti in dict Python
+    fig_dict = fig.to_dict()
+
+    return build_response(
+                            200,
+                            json.dumps({
+                                "data": fig_dict["data"],
+                                "layout": fig_dict["layout"]
+                            }),
+                            content_type="application/json"
+                        )
 
 def lambda_handler(event, context):
     print("Request event:", event)
