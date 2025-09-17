@@ -1,5 +1,5 @@
 import json
-# import numpy
+import numpy
 # import plotly.express as px
 
 # Definizione dei path
