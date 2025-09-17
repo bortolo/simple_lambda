@@ -36,10 +36,11 @@ def lambda_handler(event, context):
     try:
         # http_method = event.get("httpMethod")
         # path = event.get("path")
-
+        print(event.get("http"))
         http_method = event.get("http")["method"]
         path = event.get("http")["path"]
-
+        print(http_method)
+        print(path)
         if http_method == "GET" and path == status_check_path:
             response = get_status()
         elif http_method == "GET" and path == title_path:
