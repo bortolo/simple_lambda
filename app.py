@@ -36,20 +36,21 @@ def lambda_handler(event, context):
     try:
         # http_method = event.get("httpMethod")
         # path = event.get("path")
-        print(event.get("http"))
-        http_method = event.get("http")["method"]
-        path = event.get("http")["path"]
-        print(http_method)
+        context = event.get("requestContext")
+        print(context)
+        http = context.get("http")
+        print(http)
+        method = http.get("method")
+        path = http.get("path")
+        print(method)
         print(path)
-        if http_method == "GET" and path == status_check_path:
+        if method == "GET" and path == status_check_path:
             response = get_status()
-        elif http_method == "GET" and path == title_path:
+        elif method == "GET" and path == title_path:
             response = get_title()
         # elif http_method == "GET" and path == graph_path:
         #     response = get_graph()
         else:
-            print(http_method)
-            print(path)
             response = build_response(404, {"error": "Not Found"})
 
     except Exception as e:
