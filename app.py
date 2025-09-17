@@ -30,8 +30,10 @@ def get_graph():
     fig = px.scatter(df, x="sepal_width", y="sepal_length", color="species")
     #graph_html = fig.to_html(full_html=False, include_plotlyjs="cdn")
     # Genero HTML completo e autosufficiente
-    graph_html = fig.to_html(full_html=True, include_plotlyjs="cdn")
-    return build_response(200, graph_html, content_type="text/html")
+    # graph_html = fig.to_html(full_html=True, include_plotlyjs="cdn")
+    graph_html = fig.to_json()
+#    return build_response(200, graph_html, content_type="text/html")
+    return build_response(200, graph_html, content_type="application/json")
 
 def lambda_handler(event, context):
     print("Request event:", event)
