@@ -50,8 +50,8 @@ def lambda_handler(event, context):
             response = get_status()
         elif method == "GET" and path == title_path:
             response = get_title()
-        # elif http_method == "GET" and path == graph_path:
-        #     response = get_graph()
+        elif method == "GET" and path == graph_path:
+            response = get_graph()
         else:
             response = build_response(404, {"error": "Not Found"})
 
