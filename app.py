@@ -44,6 +44,8 @@ def lambda_handler(event, context):
         # elif http_method == "GET" and path == graph_path:
         #     response = get_graph()
         else:
+            print(http_method)
+            print(path)
             response = build_response(404, {"error": "Not Found"})
 
     except Exception as e:
