@@ -2,12 +2,13 @@ import json
 import numpy
 import pandas
 import plotly.express as px
-# import plotly.express as px
+import plotly.graph_objects as go
 
 # Definizione dei path
 status_check_path = "/status"
 title_path = "/title"
 graph_path = "/graph"
+graph_path2 = "/graph2"
 
 def build_response(status_code, body, content_type="application/json"):
     return {
@@ -46,6 +47,45 @@ def get_graph():
                             content_type="application/json"
                         )
 
+def get_graph_2(event):
+    # 1. Leggere body dalla richiesta API Gateway
+    print(event)
+    print(event["body"])
+    body = json.loads(event["body"])
+    print(body)
+    # body avrà chiavi tipo: varA_1, varA_2, ..., varC_5
+    anni = [1, 2, 3, 4, 5]
+
+    varA = [float(body.get(f"varA_{i}", 0)) for i in anni]
+    varB = [float(body.get(f"varB_{i}", 0)) for i in anni]
+    varC = [float(body.get(f"varC_{i}", 0)) for i in anni]
+
+    # 2. Costruire la figura Plotly
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=anni, y=varA, mode="lines+markers", name="Variabile A"))
+    fig.add_trace(go.Scatter(x=anni, y=varB, mode="lines+markers", name="Variabile B"))
+    fig.add_trace(go.Scatter(x=anni, y=varC, mode="lines+markers", name="Variabile C"))
+
+    fig.update_layout(
+        title="Andamento Variabili su 5 anni",
+        xaxis_title="Anno",
+        yaxis_title="Valore",
+        template="plotly_white"
+    )
+
+    # 3. Convertire in dict serializzabile
+    fig_dict = fig.to_dict()
+
+    # 4. Restituire risposta per API Gateway
+    return {
+        "statusCode": 200,
+        "headers": { "Content-Type": "application/json" },
+        "body": json.dumps({
+            "data": fig_dict["data"],
+            "layout": fig_dict["layout"]
+        })
+    }
+    
 def lambda_handler(event, context):
     print("Request event:", event)
 
@@ -67,6 +107,8 @@ def lambda_handler(event, context):
             response = get_title()
         elif method == "GET" and path == graph_path:
             response = get_graph()
+        elif method == "POST" and path == graph_path2:
+            response = get_graph_2(event)
         else:
             response = build_response(404, {"error": "Not Found"})
 
