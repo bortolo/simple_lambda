@@ -15,7 +15,8 @@ def build_response(status_code, body, content_type="application/json"):
         "statusCode": status_code,
         "headers": {
             "Content-Type": content_type,
-            "Access-Control-Allow-Origin": "*"  # Abilitare CORS
+            "Access-Control-Allow-Origin": "*",  # Abilitare CORS
+            "Access-Control-Allow-Methods": "POST, OPTIONS, GET"
         },
         "body": body if isinstance(body, str) else json.dumps(body)
     }
