@@ -77,14 +77,14 @@ def get_graph_2(event):
     fig_dict = fig.to_dict()
 
     # 4. Restituire risposta per API Gateway
-    return {
-        "statusCode": 200,
-        "headers": { "Content-Type": "application/json" },
-        "body": json.dumps({
-            "data": fig_dict["data"],
-            "layout": fig_dict["layout"]
-        })
-    }
+    return build_response(
+                            200,
+                            json.dumps({
+                                "data": fig_dict["data"],
+                                "layout": fig_dict["layout"]
+                            }),
+                            content_type="application/json"
+                        )
     
 def lambda_handler(event, context):
     print("Request event:", event)
