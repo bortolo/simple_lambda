@@ -6,7 +6,9 @@ phases:
       python: $LAMBDA_PY_RUNTIME
     commands:
       - echo "Login su ECR"
-      - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY)
+      - echo "ECR repository - $ECR_REPOSITORY"
+      - echo "Region - $AWS_REGION"
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
 
   build:
     commands:
