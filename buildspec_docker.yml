@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: $LAMBDA_PY_RUNTIME
+    commands:
+      - echo "Login su ECR"
+      - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY)
+
+  build:
+    commands:
+      - echo "Costruzione immagine Docker"
+      - docker build -t my-lambda-image .
+      - docker tag my-lambda-image:latest $ECR_REPOSITORY:latest
+
+  post_build:
+    commands:
+      - echo "Push immagine su ECR"
+      - docker push $ECR_REPOSITORY:latest
