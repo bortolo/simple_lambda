@@ -48,12 +48,21 @@ def get_graph(event):
     figC = go.Figure()
     figC.add_trace(go.Scatter(x=anni, y=varC, mode="lines+markers", name="Variabile C"))
     figC.update_layout(title="Variabile C", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
-
+    
+    npv, tv, cf = npv_dcf_pgr(varA, varB, varC, 0.01, 0.2, 0)
+    
+    figD = go.Figure()
+    figD.add_trace(go.Scatter(x=anni, y=cf, mode="lines+markers", name="Cash Flow"))
+    figD.update_layout(title="Cash Flow", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
+    
     # Convertire in dict serializzabili
     response = {
         "figA": figA.to_dict(),
         "figB": figB.to_dict(),
-        "figC": figC.to_dict()
+        "figC": figC.to_dict(),
+        "figD": figD.to_dict(),
+        "npv": npv, 
+        "tv": tv
     }
 
     # 4. Restituire risposta per API Gateway
@@ -62,7 +71,22 @@ def get_graph(event):
                             json.dumps(response),
                             content_type="application/json"
                         )
+
+def npv_dcf_pgr(revenue, ebitda, capex, pgr, wacc, cash_adv):
+    years = len(revenue)
+    cash_flows = []
     
+    for t in range(1, years + 1):
+        cf = (revenue[t-1] * ebitda[t-1] - capex[t-1])*(1 - 0.28)
+        cash_flows.append(cf / (1 + wacc)**(t-cash_adv))
+    
+    # Terminal value
+    terminal_value = (cash_flows[-1] * (1 + pgr)) / (wacc - pgr)
+    
+    npv = sum(cash_flows) + terminal_value
+    
+    return npv, terminal_value, cash_flows
+ 
 def lambda_handler(event, context):
     print("Request event:", event)
 
