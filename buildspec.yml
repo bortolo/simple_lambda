@@ -2,18 +2,21 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: $LAMBDA_PY_RUNTIME
     commands:
-      - pip install -r requirements.txt -t .
+      - echo "Login su ECR"
+      - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY)
+
   build:
     commands:
-      - echo $CODEBUILD_SRC_DIR
-      - pwd
-      - ls
-      - zip -r lambda-package.zip .
+      - echo "Costruzione immagine Docker"
+      - docker build -t my-lambda-image .
+      - docker tag my-lambda-image:latest $ECR_REPOSITORY:latest
+
   post_build:
     commands:
-      - aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda-package.zip
-
-artifacts:
-  files:
-    - lambda-package.zip
+      - echo "Push immagine su ECR"
+      - docker push $ECR_REPOSITORY:latest
+      - echo "Aggiornamento Lambda per usare la nuova immagine"
+      - aws lambda update-function-code --function-name $LAMBDA_ARN --image-uri $ECR_REPOSITORY:latest --region $AWS_REGION
