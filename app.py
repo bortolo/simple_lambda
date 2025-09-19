@@ -86,26 +86,35 @@ def npv_dcf_pgr(revenue, ebitda, capex, pgr, wacc, cash_adv):
     npv = sum(cash_flows) + terminal_value
     
     return npv, terminal_value, cash_flows
- 
+
+def http_version_handler(event):
+    """
+    Restituisce (method, path) a seconda della versione dell'evento.
+    Ritorna (None, None) se la versione non è supportata.
+    """
+    method, path = None, None
+    version = event.get("version")
+    if version == "2.0" :
+        context = event.get("requestContext")
+        http = context.get("http")
+        method = http.get("method")
+        path = http.get("path")
+    elif version == "1.0" :
+        method = event.get("httpMethod")
+        path = event.get("resource")
+    return method, path
+
 def lambda_handler(event, context):
     print("Request event:", event)
 
     response = None
     try:
-        if(event.get("version")!=2.0):
-            return build_response(400, "Unsupported event version", content_type="text/plain")
-        # http_method = event.get("httpMethod")
-        # path = event.get("path")
-        context = event.get("requestContext")
-        print(context)
-        http = context.get("http")
-        print(http)
-        method = http.get("method")
-        path = http.get("path")
+        
+        method, path = http_version_handler(event)
         print(method)
-        print(path)
-        
-        
+        print(path)        
+        if method is None or path is None :
+            return build_response(400, f"Unsupported HTTP version: {event.get('version')}", content_type="text/plain")
         # Risposta al preflight (OPTIONS)
         if method == "OPTIONS":
             return {
