@@ -92,6 +92,8 @@ def lambda_handler(event, context):
 
     response = None
     try:
+        if(event.get("version")!=2.0):
+            return build_response(400, "Unsupported event version", content_type="text/plain")
         # http_method = event.get("httpMethod")
         # path = event.get("path")
         context = event.get("requestContext")
@@ -102,6 +104,7 @@ def lambda_handler(event, context):
         path = http.get("path")
         print(method)
         print(path)
+        
         
         # Risposta al preflight (OPTIONS)
         if method == "OPTIONS":
