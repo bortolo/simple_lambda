@@ -102,6 +102,10 @@ def http_version_handler(event):
     elif version == "1.0" :
         method = event.get("httpMethod")
         path = event.get("resource")
+    elif version == None :
+        print("[ATTENZIONE] non esiste il parmetro version, ipotizziamo chiamata API AWS da REST GW")
+        method = event.get("httpMethod")
+        path = event.get("path")
     return method, path
 
 def lambda_handler(event, context):
