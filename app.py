@@ -38,23 +38,23 @@ def get_graph(event):
     # Grafico 1: Variabile A
     figA = go.Figure()
     figA.add_trace(go.Scatter(x=anni, y=varA, mode="lines+markers", name="Revenue"))
-    figA.update_layout(title="Revenue", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
+    figA.update_layout(title="Revenue", template="plotly_white")
 
     # Grafico 2: Variabile B
     figB = go.Figure()
     figB.add_trace(go.Scatter(x=anni, y=varB, mode="lines+markers", name="Ebitda"))
-    figB.update_layout(title="Ebitda [percent of rev]", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white", yaxis=dict(tickformat=".0%", range=[0, 1]))
+    figB.update_layout(title="Ebitda [percent of rev]", template="plotly_white", yaxis=dict(tickformat=".0%", range=[0, 1]))
 
     # Grafico 3: Variabile C
     figC = go.Figure()
     figC.add_trace(go.Scatter(x=anni, y=varC, mode="lines+markers", name="Capex"))
-    figC.update_layout(title="Capex", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
+    figC.update_layout(title="Capex", template="plotly_white")
     
     npv, tv, cf = npv_dcf_pgr(varA, varB, varC, pgr, wacc, cf_adv)
     
     figD = go.Figure()
     figD.add_trace(go.Scatter(x=anni, y=cf, mode="lines+markers", name="Cash Flow"))
-    figD.update_layout(title="Cash Flow", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
+    figD.update_layout(title="Cash Flow", template="plotly_white")
     
     # Convertire in dict serializzabili
     response = {
