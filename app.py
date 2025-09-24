@@ -43,7 +43,7 @@ def get_graph(event):
     # Grafico 2: Variabile B
     figB = go.Figure()
     figB.add_trace(go.Scatter(x=anni, y=varB, mode="lines+markers", name="Ebitda"))
-    figB.update_layout(title="Ebitda [percent of rev]", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
+    figB.update_layout(title="Ebitda [percent of rev]", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white", yaxis=dict(tickformat=".0%", range=[0, 1]))
 
     # Grafico 3: Variabile C
     figC = go.Figure()
