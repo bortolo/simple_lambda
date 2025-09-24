@@ -31,9 +31,9 @@ def get_graph(event):
     varA = [float(body.get(f"rev_{i}", 0)) for i in anni]
     varB = [float(body.get(f"ebitda_{i}", 0)) for i in anni]
     varC = [float(body.get(f"cpx_{i}", 0)) for i in anni]
-    wacc = float(body.get(("wacc", 0)))
-    pgr = float(body.get(("pgr", 0)))
-    cf_adv = float(body.get(("cf_adv", 0)))
+    wacc = float(body.get("wacc") or 0)
+    pgr = float(body.get("pgr") or 0)
+    cf_adv = float(body.get("cf_adv") or 0)
 
     # Grafico 1: Variabile A
     figA = go.Figure()
