@@ -28,9 +28,9 @@ def get_graph(event):
     print(body)
 
     anni = [1, 2, 3, 4, 5]
-    varA = [float(body.get(f"rev_{i}", 0)) for i in anni]
-    varB = [float(body.get(f"ebitda_{i}", 0)) for i in anni]
-    varC = [float(body.get(f"cpx_{i}", 0)) for i in anni]
+    varA = [float(body.get(f"rev_{i}") or 0) for i in anni]
+    varB = [float(body.get(f"ebitda_{i}") or 0) for i in anni]
+    varC = [float(body.get(f"cpx_{i}") or 0) for i in anni]
     wacc = float(body.get("wacc") or 0)
     pgr = float(body.get("pgr") or 0)
     cf_adv = float(body.get("cf_adv") or 0)
