@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 status_check_path = "/status"
 title_path = "/title"
 graph_path = "/graph"
+save_path = "/save"
 
 def build_response(status_code, body, content_type="application/json"):
     return {
@@ -21,6 +22,9 @@ def build_response(status_code, body, content_type="application/json"):
 
 def get_status():
     return build_response(200, {"message": "Service is operational"})
+
+def save_scenario():
+    return build_response(200, {"message": "Service is saving"})
 
 def get_graph(event):
     # 1. Leggere body dalla richiesta API Gateway
@@ -135,6 +139,8 @@ def lambda_handler(event, context):
             response = get_status()
         elif method == "POST" and path == graph_path:
             response = get_graph(event)
+        elif method == "POST" and path == save_path:
+            response = save_scenario()
         else:
             response = build_response(404, {"error": "Not Found"})
 
