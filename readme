@@ -1,0 +1,35 @@
+Attenzione che vi sono due modalità possibilità:
+1) Lambda versione Layer (sconsigliata perchè esistono limiti rigidi nel caricare le librerie 250MB massimo spacchettate e 50MB a pacchetto zip trasferito)
+2) Lambda versione container (limite molto alto su librerie ca 10GB, ma occorre gestire Dockerfile e registry)
+
+Controllare nel terraform quale buildspec viene utilizzato nella generazione delle risorse e 
+in particolare per il caso Lambda container ricordarsi che viene fatto un provisioning in due stack:
+1) creazione della prima pipeline per la generazione della container image nel registry
+2) creazione di tutte le risorse compresa la lamba (che va a pescare da ECR)
+
+PROB&DET
+1) Da PC provare url pubblico per verificare funzionamento lambda (ricordarsi di usare il path giusto)
+        curl https://re7cosnsbtgg54qekc6js66wty0aouog.lambda-url.eu-central-1.on.aws/status
+
+2) Da PC provare url pubblico del HTTP API gw per verificare funzionamento API gw (usare stage e path)
+        curl https://xj62k3au3l.execute-api.eu-central-1.amazonaws.com/prod/status
+
+3) Da API gw REST dashboard lanciare un test per verificare che API gw REST ha tutti i permessi per chiamare la lambda
+
+test per graph: { 
+    "varA_1":4,
+    "varA_2":4,
+    "varA_3":4,
+    "varA_4":4,
+    "varA_5":4,
+    "varB_1":1,
+    "varB_2":1,
+    "varB_3":1,
+    "varB_4":1,
+    "varB_5":1,
+    "varC_1":1,
+    "varC_2":1,
+    "varC_3":1,
+    "varC_4":1,
+    "varC_5":1
+}

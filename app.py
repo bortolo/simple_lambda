@@ -24,32 +24,33 @@ def get_status():
 
 def get_graph(event):
     # 1. Leggere body dalla richiesta API Gateway
-    print(event)
-    print(event["body"])
     body = json.loads(event["body"])
     print(body)
 
     anni = [1, 2, 3, 4, 5]
-    varA = [float(body.get(f"varA_{i}", 0)) for i in anni]
-    varB = [float(body.get(f"varB_{i}", 0)) for i in anni]
-    varC = [float(body.get(f"varC_{i}", 0)) for i in anni]
+    varA = [float(body.get(f"rev_{i}", 0)) for i in anni]
+    varB = [float(body.get(f"ebitda_{i}", 0)) for i in anni]
+    varC = [float(body.get(f"cpx_{i}", 0)) for i in anni]
+    wacc = float(body.get(("wacc", 0)))
+    pgr = float(body.get(("pgr", 0)))
+    cf_adv = float(body.get(("cf_adv", 0)))
 
     # Grafico 1: Variabile A
     figA = go.Figure()
-    figA.add_trace(go.Scatter(x=anni, y=varA, mode="lines+markers", name="Variabile A"))
-    figA.update_layout(title="Variabile A", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
+    figA.add_trace(go.Scatter(x=anni, y=varA, mode="lines+markers", name="Revenue"))
+    figA.update_layout(title="Revenue", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
 
     # Grafico 2: Variabile B
     figB = go.Figure()
-    figB.add_trace(go.Scatter(x=anni, y=varB, mode="lines+markers", name="Variabile B"))
-    figB.update_layout(title="Variabile B", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
+    figB.add_trace(go.Scatter(x=anni, y=varB, mode="lines+markers", name="Ebitda"))
+    figB.update_layout(title="Ebitda [percent of rev]", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
 
     # Grafico 3: Variabile C
     figC = go.Figure()
-    figC.add_trace(go.Scatter(x=anni, y=varC, mode="lines+markers", name="Variabile C"))
-    figC.update_layout(title="Variabile C", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
+    figC.add_trace(go.Scatter(x=anni, y=varC, mode="lines+markers", name="Capex"))
+    figC.update_layout(title="Capex", xaxis_title="Anno", yaxis_title="Valore", template="plotly_white")
     
-    npv, tv, cf = npv_dcf_pgr(varA, varB, varC, 0.01, 0.2, 0)
+    npv, tv, cf = npv_dcf_pgr(varA, varB, varC, pgr, wacc, cf_adv)
     
     figD = go.Figure()
     figD.add_trace(go.Scatter(x=anni, y=cf, mode="lines+markers", name="Cash Flow"))
