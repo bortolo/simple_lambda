@@ -22,6 +22,16 @@ phases:
       # - aws lambda update-function-code --function-name $LAMBDA_ARN --image-uri $ECR_REPOSITORY:latest --region $AWS_REGION
       # - aws lambda update-function-code --function-name $LAMBDA_ARN --name $ENV --image-uri $ECR_REPOSITORY:$ENV --region $AWS_REGION
       - aws lambda update-function-code --function-name $LAMBDA_ARN --image-uri $ECR_REPOSITORY:$ENV --region $AWS_REGION
+      - |
+        echo "Waiting for Lambda to become Active..."
+        while true; do
+          STATE=$(aws lambda get-function-configuration --function-name $LAMBDA_ARN --query 'State' --output text)
+          if [ "$STATE" = "Active" ]; then
+            break
+          fi
+          echo "Lambda state: $STATE, waiting..."
+          sleep 5
+        done
       - VERSION=$(aws lambda publish-version --function-name $LAMBDA_ARN --query 'Version' --output text)
       - aws lambda update-alias --function-name $LAMBDA_ARN --name $ENV --function-version $VERSION --region $AWS_REGION
 
