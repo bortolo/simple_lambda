@@ -12,11 +12,12 @@ phases:
     commands:
       - echo "Costruzione immagine Docker"
       - docker build -t my-lambda-image .
-      - docker tag my-lambda-image:latest $ECR_REPOSITORY:latest
+      - docker tag my-lambda-image:$ENV $ECR_REPOSITORY:$ENV
 
   post_build:
     commands:
       - echo "Push immagine su ECR"
-      - docker push $ECR_REPOSITORY:latest
+      - docker push $ECR_REPOSITORY:$ENV
       - echo "Aggiornamento Lambda per usare la nuova immagine"
-      - aws lambda update-function-code --function-name $LAMBDA_ARN --image-uri $ECR_REPOSITORY:latest --region $AWS_REGION
+      # - aws lambda update-function-code --function-name $LAMBDA_ARN --image-uri $ECR_REPOSITORY:latest --region $AWS_REGION
+      - aws lambda update-function-code --function-name $LAMBDA_ARN --name $ENV --image-uri $ECR_REPOSITORY:$ENV --region $AWS_REGION
