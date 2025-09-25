@@ -20,4 +20,9 @@ phases:
       - docker push $ECR_REPOSITORY:$ENV
       - echo "Aggiornamento Lambda per usare la nuova immagine"
       # - aws lambda update-function-code --function-name $LAMBDA_ARN --image-uri $ECR_REPOSITORY:latest --region $AWS_REGION
-      - aws lambda update-function-code --function-name $LAMBDA_ARN --name $ENV --image-uri $ECR_REPOSITORY:$ENV --region $AWS_REGION
+      # - aws lambda update-function-code --function-name $LAMBDA_ARN --name $ENV --image-uri $ECR_REPOSITORY:$ENV --region $AWS_REGION
+      - aws lambda update-function-code --function-name $LAMBDA_ARN --image-uri $ECR_REPOSITORY:$ENV --region $AWS_REGION
+      - VERSION=$(aws lambda publish-version --function-name MyFunction --query 'Version' --output text)
+      - aws lambda update-alias --function-name $LAMBDA_ARN --name $ENV --function-version $VERSION --region $AWS_REGION
+
+
