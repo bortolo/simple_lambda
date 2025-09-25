@@ -13,7 +13,7 @@ phases:
   build:
     commands:
       - echo "Costruzione immagine Docker"
-      - docker build -t my-lambda-image .
+      - docker build -t my-lambda-image$ENV .
       - docker tag my-lambda-image:$ENV $ECR_REPOSITORY:$ENV
 
   post_build:
