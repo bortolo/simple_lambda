@@ -26,9 +26,9 @@ phases:
         echo "Waiting for Lambda to become Active..."
         while true; do
           sleep 10
-          STATE=$(aws lambda get-function-configuration --function-name $LAMBDA_ARN --query 'State' --output text)
-          echo "Lambda state: $STATE, waiting..."
-          if [ "$STATE" = "Active" ]; then
+          STATE=$(aws lambda get-function-configuration --function-name $LAMBDA_ARN --query 'LastUpdateStatus' --output text)
+          echo "Lambda update status: $STATE, waiting..."
+          if [ "$STATE" = "Successful" ]; then
             break
           fi
         done
