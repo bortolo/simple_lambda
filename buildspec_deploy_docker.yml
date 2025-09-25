@@ -25,12 +25,12 @@ phases:
       - |
         echo "Waiting for Lambda to become Active..."
         while true; do
+          sleep 10
           STATE=$(aws lambda get-function-configuration --function-name $LAMBDA_ARN --query 'State' --output text)
+          echo "Lambda state: $STATE, waiting..."
           if [ "$STATE" = "Active" ]; then
             break
           fi
-          echo "Lambda state: $STATE, waiting..."
-          sleep 5
         done
       - VERSION=$(aws lambda publish-version --function-name $LAMBDA_ARN --query 'Version' --output text)
       - aws lambda update-alias --function-name $LAMBDA_ARN --name $ENV --function-version $VERSION --region $AWS_REGION
