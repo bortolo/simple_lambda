@@ -21,7 +21,7 @@ def build_response(status_code, body, content_type="application/json"):
     }
 
 def get_status():
-    return build_response(200, {"message": "Service is operational v6 TEST"})
+    return build_response(200, {"message": "Service is operational v7 TEST"})
 
 def save_scenario():
     return build_response(200, {"message": "Service is saving"})
