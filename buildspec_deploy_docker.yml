@@ -5,22 +5,27 @@ phases:
     runtime-versions:
       python: $LAMBDA_PY_RUNTIME
     commands:
+      - echo "Environment variables -----------------"
+      - echo "AWS region - $AWS_REGION"
+      - echo "ECR repo - $ECR_REPOSITORY"
+      - echo "ECR image - $ECR_IMAGE"
+      - echo "ENV - $ENV"
+      - echo "Lambda arn - $LAMBDA_ARN"
+      - echo "---------------------------------------"
       - echo "Login su ECR"
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
 
   build:
     commands:
       - echo "Costruzione immagine Docker"
-      - docker build -t my-lambda-image:$ENV .
-      - docker tag my-lambda-image:$ENV $ECR_REPOSITORY:$ENV
+      - docker build -t $ECR_IMAGE:$ENV .
+      - docker tag $ECR_IMAGE:$ENV $ECR_REPOSITORY:$ENV
 
   post_build:
     commands:
       - echo "Push immagine su ECR"
       - docker push $ECR_REPOSITORY:$ENV
       - echo "Aggiornamento Lambda per usare la nuova immagine"
-      # - aws lambda update-function-code --function-name $LAMBDA_ARN --image-uri $ECR_REPOSITORY:latest --region $AWS_REGION
-      # - aws lambda update-function-code --function-name $LAMBDA_ARN --name $ENV --image-uri $ECR_REPOSITORY:$ENV --region $AWS_REGION
       - aws lambda update-function-code --function-name $LAMBDA_ARN --image-uri $ECR_REPOSITORY:$ENV --region $AWS_REGION
       - |
         echo "Waiting for Lambda to become Active..."
