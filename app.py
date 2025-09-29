@@ -66,7 +66,7 @@ def save_scenario(event):
         "pgr": pgr,
         "cf_adv": cf_adv
     }
-    print("Item da salvare: "+item)
+    print(item)
     # Inserisci in DynamoDB
     table.put_item(Item=item)
     
