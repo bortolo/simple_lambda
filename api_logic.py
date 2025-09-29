@@ -119,8 +119,47 @@ def calculate_graph(event):
 
 
 def get_scenarios():
-    return build_response(
-                            200,
-                            {"items": [{"scenarioid": "XXXXXXX", "version": "YYYYYY"}]},
-                            content_type="application/json"
-                        )
+
+    try:
+        # Facciamo uno scan (attenzione su tabelle grandi)
+        # puoi sostituire con Query se hai pattern migliore
+        scan_kwargs = {}
+        items = []
+        done = False
+        start_key = None
+        while not done:
+            if start_key:
+                scan_kwargs['ExclusiveStartKey'] = start_key
+            resp = table.scan(**scan_kwargs)
+            items.extend(resp.get("Items", []))
+            start_key = resp.get("LastEvaluatedKey", None)
+            done = start_key is None
+
+        items = [decimal_to_native(i) for i in items]
+        print(items)
+        # opzionale: ritornare solo un subset di campi per la lista (es. scenarioid, version, wacc)
+        summary = [
+            {
+                "scenarioid": i["scenarioid"],
+                "version": i["version"],
+                "wacc": i.get("wacc"),
+                "pgr": i.get("pgr")
+            } for i in items
+        ]
+        print(summary)
+        return build_response(200, {"items": summary})
+    except Exception as e:
+        return build_response(500, {"message": "errore interno", "error": str(e)})
+    
+# helper per convertire Decimal -> float/int/string
+def decimal_to_native(obj):
+    if isinstance(obj, list):
+        return [decimal_to_native(i) for i in obj]
+    if isinstance(obj, dict):
+        return {k: decimal_to_native(v) for k, v in obj.items()}
+    if isinstance(obj, Decimal):
+        # se è intero restituisci int, altrimenti float
+        if obj % 1 == 0:
+            return int(obj)
+        return float(obj)
+    return obj
