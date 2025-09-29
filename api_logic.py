@@ -46,11 +46,13 @@ def save_scenario(event):
     wacc = Decimal(str(body.get("wacc", 0)))
     pgr = Decimal(str(body.get("pgr", 0)))
     cf_adv = Decimal(str(body.get("cf_adv", 0)))
+    name = str(body.get("scenario_name"))
 
     # Costruisci l'item
     item = {
         "scenarioid": scenario_id,
         "version": version,
+        "name": name,
         "years": years,
         "wacc": wacc,
         "pgr": pgr,
@@ -63,7 +65,7 @@ def save_scenario(event):
     return build_response(200, {
             "message": "Scenario salvato",
             "scenarioid": scenario_id,
-            "version": version
+            "name": name
         })
 
 def calculate_graph(event):
@@ -143,7 +145,8 @@ def get_scenarios():
                 "scenarioid": i["scenarioid"],
                 "version": i["version"],
                 "wacc": i.get("wacc"),
-                "pgr": i.get("pgr")
+                "pgr": i.get("pgr"),
+                "cf_adv": i.get("cf_adv")
             } for i in items
         ]
         print(summary)
