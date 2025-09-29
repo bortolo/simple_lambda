@@ -146,7 +146,8 @@ def get_scenarios():
                 "version": i["version"],
                 "wacc": i.get("wacc"),
                 "pgr": i.get("pgr"),
-                "cf_adv": i.get("cf_adv")
+                "cf_adv": i.get("cf_adv"),
+                "name": i.get("name")
             } for i in items
         ]
         print(summary)
