@@ -36,7 +36,7 @@ def get_status():
 
 def save_scenario(event):
     body = json.loads(event["body"])
-    print("Body in save: "+body)
+    print(body)
     # Genera ID scenario univoco
     scenario_id = str(uuid.uuid4())
     
