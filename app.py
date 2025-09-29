@@ -1,8 +1,19 @@
 import json
+import os
 import numpy
 import pandas
 import plotly.express as px
 import plotly.graph_objects as go
+
+
+import uuid
+import boto3
+from datetime import datetime
+
+table_name = os.environ.get("DYNAMODB_TABLE")
+print("Variabile tabella: "+table_name)
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table(table_name)  # nome della tua tabella DynamoDB
 
 # Definizione dei path
 status_check_path = "/status"
@@ -23,8 +34,47 @@ def build_response(status_code, body, content_type="application/json"):
 def get_status():
     return build_response(200, {"message": "Service is operational v8 TEST"})
 
-def save_scenario():
-    return build_response(200, {"message": "Service is saving"})
+def save_scenario(event):
+    body = json.loads(event["body"])
+    print("Body in save: "+body)
+    # Genera ID scenario univoco
+    scenario_id = str(uuid.uuid4())
+    
+    # Version temporanea: timestamp in secondi (o incrementale se vuoi)
+    version = int(datetime.utcnow().timestamp())
+    
+        # Costruisci la mappa 'years'
+    years = {}
+    for i in range(1, 6):
+        years[str(i)] = {
+            "rev": float(body.get(f"rev_{i}", 0)),
+            "ebitda": float(body.get(f"ebitda_{i}", 0)),
+            "cpx": float(body.get(f"cpx_{i}", 0))
+        }
+    
+        # Parametri globali
+    wacc = float(body.get("wacc", 0))
+    pgr = float(body.get("pgr", 0))
+    cf_adv = float(body.get("cf_adv", 0))
+    
+    # Costruisci l'item
+    item = {
+        "scenarioid": scenario_id,
+        "version": version,
+        "years": years,
+        "wacc": wacc,
+        "pgr": pgr,
+        "cf_adv": cf_adv
+    }
+    print("Item da salvare: "+item)
+    # Inserisci in DynamoDB
+    table.put_item(Item=item)
+    
+    return build_response(200, {
+            "message": "Scenario salvato",
+            "scenarioid": scenario_id,
+            "version": version
+        })
 
 def get_graph(event):
     # 1. Leggere body dalla richiesta API Gateway
@@ -140,7 +190,7 @@ def lambda_handler(event, context):
         elif method == "POST" and path == graph_path:
             response = get_graph(event)
         elif method == "POST" and path == save_path:
-            response = save_scenario()
+            response = save_scenario(event)
         else:
             response = build_response(404, {"error": "Not Found"})
 
