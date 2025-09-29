@@ -116,3 +116,11 @@ def calculate_graph(event):
                             json.dumps(response),
                             content_type="application/json"
                         )
+
+
+def get_scenarios():
+    return build_response(
+                            200,
+                            {"items": [{"scenarioid": "XXXXXXX", "version": "YYYYYY"}]},
+                            content_type="application/json"
+                        )

@@ -5,6 +5,7 @@ import api_logic as api
 status_check_path = "/status"
 graph_path = "/graph"
 save_path = "/save"
+scenarios_path = "/scenarios"
 
 def lambda_handler(event, context):
     response = None
@@ -31,6 +32,8 @@ def lambda_handler(event, context):
             response = api.calculate_graph(event)
         elif method == "POST" and path == save_path:
             response = api.save_scenario(event)
+        elif method == "GET" and path == scenarios_path:
+            response = api.get_scenarios()
         else:
             response = api.build_response(404, {"error": "Not Found"})
 
