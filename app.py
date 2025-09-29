@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 import uuid
 import boto3
 from datetime import datetime
+from decimal import Decimal
 
 table_name = os.environ.get("DYNAMODB_TABLE")
 print("Variabile tabella: "+table_name)
@@ -47,16 +48,15 @@ def save_scenario(event):
     years = {}
     for i in range(1, 6):
         years[str(i)] = {
-            "rev": float(body.get(f"rev_{i}", 0)),
-            "ebitda": float(body.get(f"ebitda_{i}", 0)),
-            "cpx": float(body.get(f"cpx_{i}", 0))
+            "rev": Decimal(str(body.get(f"rev_{i}", 0))),
+            "ebitda": Decimal(str(body.get(f"ebitda_{i}", 0))),
+            "cpx": Decimal(str(body.get(f"cpx_{i}", 0)))
         }
-    
-        # Parametri globali
-    wacc = float(body.get("wacc", 0))
-    pgr = float(body.get("pgr", 0))
-    cf_adv = float(body.get("cf_adv", 0))
-    
+
+    wacc = Decimal(str(body.get("wacc", 0)))
+    pgr = Decimal(str(body.get("pgr", 0)))
+    cf_adv = Decimal(str(body.get("cf_adv", 0)))
+
     # Costruisci l'item
     item = {
         "scenarioid": scenario_id,
